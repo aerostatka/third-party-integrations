@@ -9,11 +9,12 @@ const (
 )
 
 const (
-	ActionTypeOktaApplicationList    string = "applicationList"
-	ActionTypeOktaApplicationCreate  string = "applicationCreate"
-	ActionTypeOktaApplicationDisable string = "applicationDisable"
-	ActionTypeOktaApplicationEnable  string = "applicationEnable"
-	ActionTypeOktaApplicationDelete  string = "applicationDelete"
+	ActionTypeOktaApplicationList       string = "applicationList"
+	ActionTypeOktaApplicationCreate     string = "applicationCreate"
+	ActionTypeOktaApplicationDisable    string = "applicationDisable"
+	ActionTypeOktaApplicationEnable     string = "applicationEnable"
+	ActionTypeOktaApplicationDelete     string = "applicationDelete"
+	ActionTypeOktaApplicationUpdateCert string = "applicationUpdateCert"
 )
 
 type FactoryParams struct {
@@ -22,17 +23,38 @@ type FactoryParams struct {
 	ActionParameters []string
 }
 
+func ConvertToFactoryParams(params []string) (*FactoryParams, error) {
+	if len(params) < 2 {
+		return nil, errors.New("Parameters count is less than 2")
+	}
+
+	factoryParams := &FactoryParams{
+		ToolType:         params[0],
+		ActionType:       params[1],
+		ActionParameters: params[2:],
+	}
+
+	err := factoryParams.validate()
+
+	if err != nil {
+		return nil, err
+	}
+
+	return factoryParams, nil
+}
+
 func (factoryParams *FactoryParams) hasValidToolType() bool {
 	return factoryParams.ToolType == ToolTypeOkta
 }
 
 func (factoryParams *FactoryParams) hasValidActionType() bool {
 	availableOktaActions := map[string]bool{
-		ActionTypeOktaApplicationList:    true,
-		ActionTypeOktaApplicationCreate:  true,
-		ActionTypeOktaApplicationDisable: true,
-		ActionTypeOktaApplicationEnable:  true,
-		ActionTypeOktaApplicationDelete:  true,
+		ActionTypeOktaApplicationList:       true,
+		ActionTypeOktaApplicationCreate:     true,
+		ActionTypeOktaApplicationDisable:    true,
+		ActionTypeOktaApplicationEnable:     true,
+		ActionTypeOktaApplicationDelete:     true,
+		ActionTypeOktaApplicationUpdateCert: true,
 	}
 
 	switch factoryParams.ToolType {
@@ -50,18 +72,21 @@ func (factoryParams *FactoryParams) hasValidParamsNumber() bool {
 		switch factoryParams.ActionType {
 		case ActionTypeOktaApplicationList:
 			return len(factoryParams.ActionParameters) == 0
-		case ActionTypeOktaApplicationCreate,
-			ActionTypeOktaApplicationDisable,
+		case ActionTypeOktaApplicationCreate:
+			return len(factoryParams.ActionParameters) == 2
+		case ActionTypeOktaApplicationDisable,
 			ActionTypeOktaApplicationEnable,
 			ActionTypeOktaApplicationDelete:
 			return len(factoryParams.ActionParameters) == 1
+		case ActionTypeOktaApplicationUpdateCert:
+			return len(factoryParams.ActionParameters) == 3
 		}
 	}
 
 	return false
 }
 
-func (factoryParams *FactoryParams) Validate() error {
+func (factoryParams *FactoryParams) validate() error {
 	if !factoryParams.hasValidToolType() {
 		return errors.New("Tool type " + factoryParams.ToolType + " is not supported")
 	}
@@ -78,16 +103,4 @@ func (factoryParams *FactoryParams) Validate() error {
 	}
 
 	return nil
-}
-
-func ConvertToFactoryParams(params []string) (*FactoryParams, error) {
-	if len(params) < 2 {
-		return nil, errors.New("Parameters count is less than 2")
-	}
-
-	return &FactoryParams{
-		ToolType:         params[0],
-		ActionType:       params[1],
-		ActionParameters: params[2:],
-	}, nil
 }

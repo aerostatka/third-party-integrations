@@ -27,12 +27,6 @@ func Start(params []string) {
 		log.Fatal(err.Error())
 	}
 
-	err = factoryParams.Validate()
-
-	if err != nil {
-		log.Fatal(err.Error())
-	}
-
 	log.Info("Config has been validated successfully")
 
 	action, err := actionFactory.Create(factoryParams)
