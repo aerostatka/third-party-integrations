@@ -11,13 +11,12 @@ type OktaToolParameters struct {
 
 func (toolParams *OktaToolParameters) LoadParameters(params []string) error {
 	switch toolParams.Action {
-	case ActionTypeOktaApplicationList:
-		return nil
 	case ActionTypeOktaApplicationCreate:
 		toolParams.DataLocation = &(params[0])
 		toolParams.TemplateLocation = &(params[1])
 		return nil
-	case ActionTypeOktaApplicationDisable,
+	case ActionTypeOktaApplicationList,
+		ActionTypeOktaApplicationDisable,
 		ActionTypeOktaApplicationEnable,
 		ActionTypeOktaApplicationDelete:
 		toolParams.DataLocation = &(params[0])
