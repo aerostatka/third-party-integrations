@@ -1,5 +1,4 @@
-package tools
+package models
 
 type ActionResult struct {
-
 }

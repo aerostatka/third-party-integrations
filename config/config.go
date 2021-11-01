@@ -8,7 +8,7 @@ import (
 
 type OktaConfig struct {
 	Domain string
-	Token string
+	Token  string
 }
 
 type AppConfig struct {
@@ -42,7 +42,7 @@ func CreateContextConfig() (*ContextConfig, error) {
 	appConfig := &AppConfig{
 		Okta: OktaConfig{
 			Domain: os.Getenv("OKTA_ORG_URL"),
-			Token: os.Getenv("OKTA_TOKEN"),
+			Token:  os.Getenv("OKTA_TOKEN"),
 		},
 	}
 
