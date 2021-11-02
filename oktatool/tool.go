@@ -2,7 +2,6 @@ package oktatool
 
 import (
 	"context"
-	"errors"
 	"github.com/aerostatka/third-party-integrations/config"
 	"github.com/aerostatka/third-party-integrations/models"
 	"github.com/okta/okta-sdk-golang/v2/okta"
@@ -42,20 +41,28 @@ func CreateOktaTool(appConfig *config.AppConfig, action string, actionParameters
 	}, nil
 }
 
-func (tool *ConsoleTool) PerformAction() (*models.ActionResult, error) {
+func (tool *ConsoleTool) PerformAction() *models.ActionResult {
 	switch tool.parameters.Action {
 	case models.ActionTypeOktaApplicationList:
 		_, err := tool.listApplications()
 		if err != nil {
-			return nil, err
+			return models.CreateErrorResult(err.Error())
 		}
+
+		return models.CreateSuccessfulResult("Application list is stored in " + *tool.parameters.DataLocation)
 	}
 
-	return nil, errors.New("Action is not supported")
+	return models.CreateErrorResult("Action is not supported")
 }
 
 func (tool *ConsoleTool) listApplications() ([]models.SimpleApp, error) {
 	apps, err := tool.repository.GetApplications()
+
+	if err != nil {
+		return apps, err
+	}
+
+	err = tool.storage.StoreApplicationData(*tool.parameters.DataLocation, apps)
 
 	if err != nil {
 		return apps, err

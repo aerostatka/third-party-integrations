@@ -37,11 +37,17 @@ func Start(params []string) {
 
 	log.Info("Action has been created successfully")
 
-	_, err = action.PerformAction()
+	result := action.PerformAction()
 
-	if err != nil {
-		log.Fatal(err.Error())
+	if result == nil {
+		log.Fatal("Result is empty")
 	}
+
+	if result.HasError() {
+		log.Fatal(result.Message)
+	}
+
+	log.Info(result.Message)
 
 	log.Info("Application finish")
 }

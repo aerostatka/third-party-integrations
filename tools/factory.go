@@ -12,7 +12,7 @@ type Factory interface {
 }
 
 type Tool interface {
-	PerformAction() (*models.ActionResult, error)
+	PerformAction() *models.ActionResult
 }
 
 type ConsoleToolsFactory struct {
