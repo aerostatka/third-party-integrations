@@ -1,6 +1,9 @@
 package models
 
 type SimpleApp struct {
-	Url   string
-	Label string
+	Id     string
+	Code   string
+	Url    string
+	Label  string
+	Status string
 }

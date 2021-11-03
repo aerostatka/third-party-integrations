@@ -20,7 +20,7 @@ func Start(params []string) {
 
 	log.Info("Config has been parsed successfully")
 
-	actionFactory := tools.CreateConsoleToolsFactory(appConfig.GetConfig())
+	actionFactory := tools.CreateConsoleToolsFactory(appConfig.GetConfig(), log)
 	factoryParams, err := models.ConvertToFactoryParams(params)
 
 	if err != nil {
