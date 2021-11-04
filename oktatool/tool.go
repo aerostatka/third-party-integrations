@@ -42,7 +42,7 @@ func CreateOktaTool(appConfig *config.AppConfig, action string, actionParameters
 
 	return &ConsoleTool{
 		repository: CreateOktaRepository(ctx, client),
-		storage:    CreateLocalFileStorage(),
+		storage:    CreateLocalCsvFileStorage(),
 		parameters: config,
 		logger:     log,
 	}, nil
@@ -56,26 +56,31 @@ func (tool *ConsoleTool) PerformAction() *models.ActionResult {
 			return models.CreateErrorResult(err.Error())
 		}
 
-		return models.CreateSuccessfulResult("Application list is stored in " + *tool.parameters.DataLocation)
+		return models.CreateSuccessfulResult("Application list is stored in " + tool.parameters.DataLocation)
 	}
 
 	return models.CreateErrorResult("Action is not supported")
 }
 
 func (tool *ConsoleTool) listApplications() ([]models.SimpleApp, error) {
-	apps, err := tool.repository.GetApplications()
+	tool.logger.Info("Fetching applications....")
+	apps, err := tool.repository.GetApplications(tool.parameters.OnlyActive, tool.parameters.Limit)
 
 	if err != nil {
 		return apps, err
 	}
 
+	tool.logger.Info("Done.")
 	tool.logger.Info(fmt.Sprintf("%d applications were found", len(apps)))
 
-	err = tool.storage.StoreApplicationData(*tool.parameters.DataLocation, apps)
+	tool.logger.Info("Storing applications to a file")
+	err = tool.storage.StoreApplicationData(tool.parameters.DataLocation, apps)
 
 	if err != nil {
 		return apps, err
 	}
+
+	tool.logger.Info("Done.")
 
 	return apps, nil
 }

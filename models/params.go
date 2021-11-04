@@ -72,8 +72,9 @@ func (factoryParams *FactoryParams) hasValidParamsNumber() bool {
 		switch factoryParams.ActionType {
 		case ActionTypeOktaApplicationCreate:
 			return len(factoryParams.ActionParameters) > 1 && len(factoryParams.ActionParameters) < 5
-		case ActionTypeOktaApplicationList,
-			ActionTypeOktaApplicationDisable,
+		case ActionTypeOktaApplicationList:
+			return len(factoryParams.ActionParameters) > 0 && len(factoryParams.ActionParameters) < 4
+		case ActionTypeOktaApplicationDisable,
 			ActionTypeOktaApplicationEnable,
 			ActionTypeOktaApplicationDelete:
 			return len(factoryParams.ActionParameters) == 1

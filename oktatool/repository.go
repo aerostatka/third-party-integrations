@@ -9,11 +9,11 @@ import (
 
 const (
 	OktaRepositoryApplicationsListLimit = 50
-	OktaRepositoryApplicationsHardLimit = 1000
+	OktaRepositoryApplicationsHardLimit = 10000
 )
 
 type Repository interface {
-	GetApplications() ([]models.SimpleApp, error)
+	GetApplications(onlyActive bool, hardLimit int) ([]models.SimpleApp, error)
 }
 
 type OktaRepository struct {
@@ -28,17 +28,32 @@ func CreateOktaRepository(ctx context.Context, ct *okta.Client) *OktaRepository 
 	}
 }
 
-func (rep *OktaRepository) GetApplications() ([]models.SimpleApp, error) {
+func (rep *OktaRepository) GetApplications(onlyActive bool, hardLimit int) ([]models.SimpleApp, error) {
 	var applications []okta.App
 	var apps []models.SimpleApp
 	var resp *okta.Response
 	var err error
 
+	if hardLimit <= 0 {
+		hardLimit = OktaRepositoryApplicationsHardLimit
+	}
+
+	listLimit := OktaRepositoryApplicationsListLimit
+	if hardLimit < listLimit {
+		listLimit = hardLimit
+	}
+
 	for {
 		if resp == nil {
-			applications, resp, err = rep.client.Application.ListApplications(rep.context, &query.Params{
-				Limit: OktaRepositoryApplicationsListLimit,
-			})
+			qr := &query.Params{
+				Limit: int64(listLimit),
+			}
+
+			if onlyActive {
+				qr.Filter = "status eq \"ACTIVE\""
+			}
+
+			applications, resp, err = rep.client.Application.ListApplications(rep.context, qr)
 		} else {
 			resp, err = resp.Next(rep.context, &applications)
 		}
@@ -58,7 +73,7 @@ func (rep *OktaRepository) GetApplications() ([]models.SimpleApp, error) {
 			apps = append(apps, app)
 		}
 
-		if len(apps) >= OktaRepositoryApplicationsHardLimit {
+		if len(apps) >= hardLimit {
 			break
 		}
 
