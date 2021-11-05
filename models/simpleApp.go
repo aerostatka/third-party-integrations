@@ -7,3 +7,14 @@ type SimpleApp struct {
 	Label  string
 	Status string
 }
+
+func (app SimpleApp) FindStorageAppInList(list []SimpleApp) *SimpleApp {
+	for _, listApp := range list {
+		if app.Label == listApp.Label {
+			listApp.Url = app.Url
+			return &listApp
+		}
+	}
+
+	return nil
+}

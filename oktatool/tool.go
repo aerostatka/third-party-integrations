@@ -2,7 +2,6 @@ package oktatool
 
 import (
 	"context"
-	"fmt"
 	"github.com/aerostatka/third-party-integrations/config"
 	"github.com/aerostatka/third-party-integrations/logger"
 	"github.com/aerostatka/third-party-integrations/models"
@@ -14,6 +13,10 @@ type ConsoleTool struct {
 	storage    Storage
 	parameters *models.OktaToolParameters
 	logger     logger.Logger
+}
+
+type ConsoleAction interface {
+	ApplyAction() *models.ActionResult
 }
 
 func CreateOktaTool(appConfig *config.AppConfig, action string, actionParameters []string, log logger.Logger) (*ConsoleTool, error) {
@@ -51,36 +54,14 @@ func CreateOktaTool(appConfig *config.AppConfig, action string, actionParameters
 func (tool *ConsoleTool) PerformAction() *models.ActionResult {
 	switch tool.parameters.Action {
 	case models.ActionTypeOktaApplicationList:
-		_, err := tool.listApplications()
-		if err != nil {
-			return models.CreateErrorResult(err.Error())
-		}
+		action := CreateListAction(tool.repository, tool.storage, tool.parameters, tool.logger)
 
-		return models.CreateSuccessfulResult("Application list is stored in " + tool.parameters.DataLocation)
+		return action.ApplyAction()
+	case models.ActionTypeOktaApplicationDisable:
+		action := CreateDisableAction(tool.repository, tool.storage, tool.parameters, tool.logger)
+
+		return action.ApplyAction()
 	}
 
 	return models.CreateErrorResult("Action is not supported")
-}
-
-func (tool *ConsoleTool) listApplications() ([]models.SimpleApp, error) {
-	tool.logger.Info("Fetching applications....")
-	apps, err := tool.repository.GetApplications(tool.parameters.OnlyActive, tool.parameters.Limit)
-
-	if err != nil {
-		return apps, err
-	}
-
-	tool.logger.Info("Done.")
-	tool.logger.Info(fmt.Sprintf("%d applications were found", len(apps)))
-
-	tool.logger.Info("Storing applications to a file")
-	err = tool.storage.StoreApplicationData(tool.parameters.DataLocation, apps)
-
-	if err != nil {
-		return apps, err
-	}
-
-	tool.logger.Info("Done.")
-
-	return apps, nil
 }
