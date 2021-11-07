@@ -44,7 +44,7 @@ func (action *DisableAction) disableApplications() error {
 	action.logger.Info(fmt.Sprintf("%d applications successfully fetched", len(apps)))
 	action.logger.Info("Fetching applications from OKTA....")
 
-	existingApps, err := action.repository.GetApplications(true, action.parameters.Limit)
+	existingApps, err := action.repository.GetApplications(models.OktaParamsApplicationsStatusActive, action.parameters.Limit)
 	if err != nil {
 		return err
 	}

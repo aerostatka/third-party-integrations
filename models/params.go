@@ -2,6 +2,7 @@ package models
 
 import (
 	"errors"
+	"fmt"
 )
 
 const (
@@ -88,18 +89,23 @@ func (factoryParams *FactoryParams) hasValidParamsNumber() bool {
 
 func (factoryParams *FactoryParams) validate() error {
 	if !factoryParams.hasValidToolType() {
-		return errors.New("Tool type " + factoryParams.ToolType + " is not supported")
+		return errors.New(fmt.Sprintf("Tool type %s is not supported", factoryParams.ToolType))
 	}
 
 	if !factoryParams.hasValidActionType() {
-		return errors.New("Action type " + factoryParams.ActionType +
-			" is not supported for tool " + factoryParams.ToolType)
+		return errors.New(fmt.Sprintf(
+			"Action type %s is not supported for tool %s",
+			factoryParams.ActionType,
+			factoryParams.ToolType),
+		)
 	}
 
 	if !factoryParams.hasValidParamsNumber() {
-		return errors.New("Action type " + factoryParams.ActionType +
-			" for tool " + factoryParams.ToolType +
-			" has the wrong number of parameters")
+		return errors.New(fmt.Sprintf(
+			"Action type %s for tool %s has the wrong number of parameters",
+			factoryParams.ActionType,
+			factoryParams.ToolType),
+		)
 	}
 
 	return nil

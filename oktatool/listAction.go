@@ -35,7 +35,7 @@ func (action *ListAction) ApplyAction() *models.ActionResult {
 
 func (action *ListAction) listApplications() ([]models.SimpleApp, error) {
 	action.logger.Info("Fetching applications....")
-	apps, err := action.repository.GetApplications(action.parameters.OnlyActive, action.parameters.Limit)
+	apps, err := action.repository.GetApplications(action.parameters.Status, action.parameters.Limit)
 
 	if err != nil {
 		return apps, err

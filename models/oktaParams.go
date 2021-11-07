@@ -2,13 +2,22 @@ package models
 
 import (
 	"errors"
+	"fmt"
 	"os"
 	"strconv"
 )
 
 const (
-	OktaParamsDefaultTemplateLocation = "/data/templates/application/default.json"
-	OktaParamsActiveStatus            = "active"
+	OktaParamsDefaultTemplateLocation    = "/data/templates/application/default.json"
+	OktaParamsApplicationsStatusActive   = "ACTIVE"
+	OktaParamsApplicationsStatusInactive = "INACTIVE"
+)
+
+var (
+	OktaParamsStatuses = map[string]bool{
+		OktaParamsApplicationsStatusActive:   true,
+		OktaParamsApplicationsStatusInactive: true,
+	}
 )
 
 type OktaToolParameters struct {
@@ -18,7 +27,7 @@ type OktaToolParameters struct {
 	TemplateName     string
 	CertLocation     string
 	Limit            int
-	OnlyActive       bool
+	Status           string
 }
 
 func (toolParams *OktaToolParameters) LoadParameters(params []string) error {
@@ -46,7 +55,7 @@ func (toolParams *OktaToolParameters) LoadParameters(params []string) error {
 		}
 	case ActionTypeOktaApplicationList:
 		toolParams.DataLocation = params[0]
-		toolParams.OnlyActive = false
+		toolParams.Status = ""
 
 		length := len(params)
 		if length > 1 {
@@ -60,11 +69,11 @@ func (toolParams *OktaToolParameters) LoadParameters(params []string) error {
 		}
 
 		if length > 2 {
-			if params[2] == OktaParamsActiveStatus {
-				toolParams.OnlyActive = true
-			} else {
-				return errors.New("Third parameter is incorrect")
+			if !OktaParamsStatuses[params[2]] {
+				return errors.New("Provided status is not valid")
 			}
+
+			toolParams.Status = params[2]
 		}
 	case ActionTypeOktaApplicationDisable,
 		ActionTypeOktaApplicationEnable,
@@ -74,7 +83,7 @@ func (toolParams *OktaToolParameters) LoadParameters(params []string) error {
 		toolParams.DataLocation = params[0]
 		toolParams.CertLocation = params[1]
 	default:
-		return errors.New("Action " + toolParams.Action + " is not supported")
+		return errors.New(fmt.Sprintf("Action %s is not supported", toolParams.Action))
 	}
 
 	return nil

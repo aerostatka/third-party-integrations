@@ -2,6 +2,7 @@ package oktatool
 
 import (
 	"context"
+	"fmt"
 	"github.com/aerostatka/third-party-integrations/models"
 	"github.com/okta/okta-sdk-golang/v2/okta"
 	"github.com/okta/okta-sdk-golang/v2/okta/query"
@@ -13,7 +14,7 @@ const (
 )
 
 type Repository interface {
-	GetApplications(onlyActive bool, hardLimit int) ([]models.SimpleApp, error)
+	GetApplications(status string, hardLimit int) ([]models.SimpleApp, error)
 }
 
 type OktaRepository struct {
@@ -28,7 +29,7 @@ func CreateOktaRepository(ctx context.Context, ct *okta.Client) *OktaRepository 
 	}
 }
 
-func (rep *OktaRepository) GetApplications(onlyActive bool, hardLimit int) ([]models.SimpleApp, error) {
+func (rep *OktaRepository) GetApplications(status string, hardLimit int) ([]models.SimpleApp, error) {
 	var applications []okta.App
 	var apps []models.SimpleApp
 	var resp *okta.Response
@@ -49,8 +50,8 @@ func (rep *OktaRepository) GetApplications(onlyActive bool, hardLimit int) ([]mo
 				Limit: int64(listLimit),
 			}
 
-			if onlyActive {
-				qr.Filter = "status eq \"ACTIVE\""
+			if status != "" {
+				qr.Filter = fmt.Sprintf("status eq \"%s\"", status)
 			}
 
 			applications, resp, err = rep.client.Application.ListApplications(rep.context, qr)
