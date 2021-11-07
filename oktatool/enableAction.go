@@ -59,11 +59,11 @@ func (action *EnableAction) enableApplications() error {
 		oktaApp := app.FindStorageAppInList(inactiveApps)
 
 		if oktaApp == nil {
-			action.logger.Info(fmt.Sprintf("Inactive application %s is not found in OKTA.", app.Label))
+			action.logger.Info(fmt.Sprintf("Inactive application %s is not found in OKTA.", oktaApp.Label))
 		} else {
-			action.logger.Info(fmt.Sprintf("Inactive application %s is found in OKTA.", app.Label))
+			action.logger.Info(fmt.Sprintf("Inactive application %s is found in OKTA.", oktaApp.Label))
 			action.logger.Info("Enabling application....")
-			err := action.repository.EnableApplication(oktaApp)
+			err := action.repository.ChangeApplicationStatus(oktaApp, models.OktaParamsApplicationsStatusActive)
 			if err != nil {
 				return err
 			}

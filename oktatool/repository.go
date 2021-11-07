@@ -2,6 +2,7 @@ package oktatool
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"github.com/aerostatka/third-party-integrations/models"
 	"github.com/okta/okta-sdk-golang/v2/okta"
@@ -15,8 +16,8 @@ const (
 
 type Repository interface {
 	GetApplications(status string, hardLimit int) ([]models.SimpleApp, error)
-	DisableApplication(app *models.SimpleApp) error
-	EnableApplication(app *models.SimpleApp) error
+	ChangeApplicationStatus(app *models.SimpleApp, status string) error
+	DeleteApplication(app *models.SimpleApp) error
 }
 
 type OktaRepository struct {
@@ -88,14 +89,27 @@ func (rep *OktaRepository) GetApplications(status string, hardLimit int) ([]mode
 	return apps, nil
 }
 
-func (rep *OktaRepository) DisableApplication(app *models.SimpleApp) error {
-	_, err := rep.client.Application.DeactivateApplication(rep.context, app.Id)
+func (rep *OktaRepository) ChangeApplicationStatus(app *models.SimpleApp, status string) error {
+	if app.Id == "" {
+		return errors.New("Application id is not set up")
+	}
+
+	var err error
+	if status == models.OktaParamsApplicationsStatusActive {
+		_, err = rep.client.Application.ActivateApplication(rep.context, app.Id)
+	} else {
+		_, err = rep.client.Application.DeactivateApplication(rep.context, app.Id)
+	}
 
 	return err
 }
 
-func (rep *OktaRepository) EnableApplication(app *models.SimpleApp) error {
-	_, err := rep.client.Application.ActivateApplication(rep.context, app.Id)
+func (rep *OktaRepository) DeleteApplication(app *models.SimpleApp) error {
+	if app.Id == "" {
+		return errors.New("Application id is not set up")
+	}
+
+	_, err := rep.client.Application.DeleteApplication(rep.context, app.Id)
 
 	return err
 }

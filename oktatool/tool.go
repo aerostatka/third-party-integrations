@@ -65,6 +65,10 @@ func (tool *ConsoleTool) PerformAction() *models.ActionResult {
 		action := CreateEnableAction(tool.repository, tool.storage, tool.parameters, tool.logger)
 
 		return action.ApplyAction()
+	case models.ActionTypeOktaApplicationDelete:
+		action := CreateDeleteAction(tool.repository, tool.storage, tool.parameters, tool.logger)
+
+		return action.ApplyAction()
 	}
 
 	return models.CreateErrorResult("Action is not supported")
