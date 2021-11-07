@@ -15,6 +15,8 @@ const (
 
 type Repository interface {
 	GetApplications(status string, hardLimit int) ([]models.SimpleApp, error)
+	DisableApplication(app *models.SimpleApp) error
+	EnableApplication(app *models.SimpleApp) error
 }
 
 type OktaRepository struct {
@@ -84,4 +86,16 @@ func (rep *OktaRepository) GetApplications(status string, hardLimit int) ([]mode
 	}
 
 	return apps, nil
+}
+
+func (rep *OktaRepository) DisableApplication(app *models.SimpleApp) error {
+	_, err := rep.client.Application.DeactivateApplication(rep.context, app.Id)
+
+	return err
+}
+
+func (rep *OktaRepository) EnableApplication(app *models.SimpleApp) error {
+	_, err := rep.client.Application.ActivateApplication(rep.context, app.Id)
+
+	return err
 }

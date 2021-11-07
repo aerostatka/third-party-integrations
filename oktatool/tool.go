@@ -61,6 +61,10 @@ func (tool *ConsoleTool) PerformAction() *models.ActionResult {
 		action := CreateDisableAction(tool.repository, tool.storage, tool.parameters, tool.logger)
 
 		return action.ApplyAction()
+	case models.ActionTypeOktaApplicationEnable:
+		action := CreateEnableAction(tool.repository, tool.storage, tool.parameters, tool.logger)
+
+		return action.ApplyAction()
 	}
 
 	return models.CreateErrorResult("Action is not supported")

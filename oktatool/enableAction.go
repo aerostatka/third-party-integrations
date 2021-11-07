@@ -6,15 +6,15 @@ import (
 	"github.com/aerostatka/third-party-integrations/models"
 )
 
-type DisableAction struct {
+type EnableAction struct {
 	repository Repository
 	storage    Storage
 	parameters *models.OktaToolParameters
 	logger     logger.Logger
 }
 
-func CreateDisableAction(rep Repository, st Storage, params *models.OktaToolParameters, log logger.Logger) *DisableAction {
-	return &DisableAction{
+func CreateEnableAction(rep Repository, st Storage, params *models.OktaToolParameters, log logger.Logger) *EnableAction {
+	return &EnableAction{
 		repository: rep,
 		storage:    st,
 		parameters: params,
@@ -22,18 +22,18 @@ func CreateDisableAction(rep Repository, st Storage, params *models.OktaToolPara
 	}
 }
 
-func (action *DisableAction) ApplyAction() *models.ActionResult {
-	err := action.disableApplications()
+func (action *EnableAction) ApplyAction() *models.ActionResult {
+	err := action.enableApplications()
 	if err != nil {
 		return models.CreateErrorResult(err.Error())
 	}
 
 	return models.CreateSuccessfulResult(
-		fmt.Sprintf("Found applications from the list %s were disabled", action.parameters.DataLocation),
+		fmt.Sprintf("Found applications from the list %s were enabled", action.parameters.DataLocation),
 	)
 }
 
-func (action *DisableAction) disableApplications() error {
+func (action *EnableAction) enableApplications() error {
 	action.logger.Info("Fetching applications from storage....")
 	apps, err := action.storage.GetAppsData(action.parameters.DataLocation)
 	if err != nil {
@@ -44,26 +44,26 @@ func (action *DisableAction) disableApplications() error {
 	action.logger.Info(fmt.Sprintf("%d applications successfully fetched", len(apps)))
 	action.logger.Info("Fetching applications from OKTA....")
 
-	activeApps, err := action.repository.GetApplications(
-		models.OktaParamsApplicationsStatusActive,
+	inactiveApps, err := action.repository.GetApplications(
+		models.OktaParamsApplicationsStatusInactive,
 		action.parameters.Limit,
 	)
 	if err != nil {
 		return err
 	}
 
-	action.logger.Info(fmt.Sprintf("%d active applications were found", len(activeApps)))
+	action.logger.Info(fmt.Sprintf("%d inactive applications were found", len(inactiveApps)))
 
 	for _, app := range apps {
 		action.logger.Info(fmt.Sprintf("Processing %s application.", app.Label))
-		oktaApp := app.FindStorageAppInList(activeApps)
+		oktaApp := app.FindStorageAppInList(inactiveApps)
 
 		if oktaApp == nil {
-			action.logger.Info(fmt.Sprintf("Active application %s is not found in OKTA.", app.Label))
+			action.logger.Info(fmt.Sprintf("Inactive application %s is not found in OKTA.", app.Label))
 		} else {
-			action.logger.Info(fmt.Sprintf("Active application %s is found in OKTA.", app.Label))
-			action.logger.Info("Disabling application....")
-			err := action.repository.DisableApplication(oktaApp)
+			action.logger.Info(fmt.Sprintf("Inactive application %s is found in OKTA.", app.Label))
+			action.logger.Info("Enabling application....")
+			err := action.repository.EnableApplication(oktaApp)
 			if err != nil {
 				return err
 			}
