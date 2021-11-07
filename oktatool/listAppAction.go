@@ -6,15 +6,15 @@ import (
 	"github.com/aerostatka/third-party-integrations/models"
 )
 
-type ListAction struct {
+type ListAppAction struct {
 	repository Repository
 	storage    Storage
 	parameters *models.OktaToolParameters
 	logger     logger.Logger
 }
 
-func CreateListAction(rep Repository, st Storage, params *models.OktaToolParameters, log logger.Logger) *ListAction {
-	return &ListAction{
+func CreateListAction(rep Repository, st Storage, params *models.OktaToolParameters, log logger.Logger) *ListAppAction {
+	return &ListAppAction{
 		repository: rep,
 		storage:    st,
 		parameters: params,
@@ -22,7 +22,7 @@ func CreateListAction(rep Repository, st Storage, params *models.OktaToolParamet
 	}
 }
 
-func (action *ListAction) ApplyAction() *models.ActionResult {
+func (action *ListAppAction) ApplyAction() *models.ActionResult {
 	_, err := action.listApplications()
 	if err != nil {
 		return models.CreateErrorResult(err.Error())
@@ -33,7 +33,7 @@ func (action *ListAction) ApplyAction() *models.ActionResult {
 	)
 }
 
-func (action *ListAction) listApplications() ([]models.SimpleApp, error) {
+func (action *ListAppAction) listApplications() ([]models.SimpleApp, error) {
 	action.logger.Info("Fetching applications....")
 	apps, err := action.repository.GetApplications(action.parameters.Status, action.parameters.Limit)
 

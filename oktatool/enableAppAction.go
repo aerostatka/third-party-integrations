@@ -6,15 +6,15 @@ import (
 	"github.com/aerostatka/third-party-integrations/models"
 )
 
-type EnableAction struct {
+type EnableAppAction struct {
 	repository Repository
 	storage    Storage
 	parameters *models.OktaToolParameters
 	logger     logger.Logger
 }
 
-func CreateEnableAction(rep Repository, st Storage, params *models.OktaToolParameters, log logger.Logger) *EnableAction {
-	return &EnableAction{
+func CreateEnableAction(rep Repository, st Storage, params *models.OktaToolParameters, log logger.Logger) *EnableAppAction {
+	return &EnableAppAction{
 		repository: rep,
 		storage:    st,
 		parameters: params,
@@ -22,7 +22,7 @@ func CreateEnableAction(rep Repository, st Storage, params *models.OktaToolParam
 	}
 }
 
-func (action *EnableAction) ApplyAction() *models.ActionResult {
+func (action *EnableAppAction) ApplyAction() *models.ActionResult {
 	err := action.enableApplications()
 	if err != nil {
 		return models.CreateErrorResult(err.Error())
@@ -33,7 +33,7 @@ func (action *EnableAction) ApplyAction() *models.ActionResult {
 	)
 }
 
-func (action *EnableAction) enableApplications() error {
+func (action *EnableAppAction) enableApplications() error {
 	action.logger.Info("Fetching applications from storage....")
 	apps, err := action.storage.GetAppsData(action.parameters.DataLocation)
 	if err != nil {
