@@ -13,7 +13,7 @@ type DisableAppAction struct {
 	logger     logger.Logger
 }
 
-func CreateDisableAction(rep Repository, st Storage, params *models.OktaToolParameters, log logger.Logger) *DisableAppAction {
+func CreateDisableAppAction(rep Repository, st Storage, params *models.OktaToolParameters, log logger.Logger) *DisableAppAction {
 	return &DisableAppAction{
 		repository: rep,
 		storage:    st,

@@ -13,7 +13,7 @@ type EnableAppAction struct {
 	logger     logger.Logger
 }
 
-func CreateEnableAction(rep Repository, st Storage, params *models.OktaToolParameters, log logger.Logger) *EnableAppAction {
+func CreateEnableAppAction(rep Repository, st Storage, params *models.OktaToolParameters, log logger.Logger) *EnableAppAction {
 	return &EnableAppAction{
 		repository: rep,
 		storage:    st,

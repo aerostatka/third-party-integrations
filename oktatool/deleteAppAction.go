@@ -13,7 +13,7 @@ type DeleteAppAction struct {
 	logger     logger.Logger
 }
 
-func CreateDeleteAction(rep Repository, st Storage, params *models.OktaToolParameters, log logger.Logger) *DeleteAppAction {
+func CreateDeleteAppAction(rep Repository, st Storage, params *models.OktaToolParameters, log logger.Logger) *DeleteAppAction {
 	return &DeleteAppAction{
 		repository: rep,
 		storage:    st,
@@ -44,7 +44,7 @@ func (action *DeleteAppAction) disableApplications() error {
 	action.logger.Info(fmt.Sprintf("%d applications successfully fetched", len(apps)))
 	action.logger.Info("Fetching applications from OKTA....")
 
-	activeApps, err := action.repository.GetApplications(
+	oktaApps, err := action.repository.GetApplications(
 		"",
 		action.parameters.Limit,
 	)
@@ -52,11 +52,11 @@ func (action *DeleteAppAction) disableApplications() error {
 		return err
 	}
 
-	action.logger.Info(fmt.Sprintf("%d applications were found", len(activeApps)))
+	action.logger.Info(fmt.Sprintf("%d applications were found", len(oktaApps)))
 
 	for _, app := range apps {
 		action.logger.Info(fmt.Sprintf("Processing %s application.", app.Label))
-		oktaApp := app.FindStorageAppInList(activeApps)
+		oktaApp := app.FindStorageAppInList(oktaApps)
 
 		if oktaApp == nil {
 			action.logger.Info(fmt.Sprintf("Application %s is not found in OKTA.", app.Label))

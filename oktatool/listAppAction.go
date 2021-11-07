@@ -13,7 +13,7 @@ type ListAppAction struct {
 	logger     logger.Logger
 }
 
-func CreateListAction(rep Repository, st Storage, params *models.OktaToolParameters, log logger.Logger) *ListAppAction {
+func CreateListAppAction(rep Repository, st Storage, params *models.OktaToolParameters, log logger.Logger) *ListAppAction {
 	return &ListAppAction{
 		repository: rep,
 		storage:    st,

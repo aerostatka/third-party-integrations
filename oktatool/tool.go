@@ -54,19 +54,23 @@ func CreateOktaTool(appConfig *config.AppConfig, action string, actionParameters
 func (tool *ConsoleTool) PerformAction() *models.ActionResult {
 	switch tool.parameters.Action {
 	case models.ActionTypeOktaApplicationList:
-		action := CreateListAction(tool.repository, tool.storage, tool.parameters, tool.logger)
+		action := CreateListAppAction(tool.repository, tool.storage, tool.parameters, tool.logger)
+
+		return action.ApplyAction()
+	case models.ActionTypeOktaApplicationCreate:
+		action := CreateCreateAppAction(tool.repository, tool.storage, tool.parameters, tool.logger)
 
 		return action.ApplyAction()
 	case models.ActionTypeOktaApplicationDisable:
-		action := CreateDisableAction(tool.repository, tool.storage, tool.parameters, tool.logger)
+		action := CreateDisableAppAction(tool.repository, tool.storage, tool.parameters, tool.logger)
 
 		return action.ApplyAction()
 	case models.ActionTypeOktaApplicationEnable:
-		action := CreateEnableAction(tool.repository, tool.storage, tool.parameters, tool.logger)
+		action := CreateEnableAppAction(tool.repository, tool.storage, tool.parameters, tool.logger)
 
 		return action.ApplyAction()
 	case models.ActionTypeOktaApplicationDelete:
-		action := CreateDeleteAction(tool.repository, tool.storage, tool.parameters, tool.logger)
+		action := CreateDeleteAppAction(tool.repository, tool.storage, tool.parameters, tool.logger)
 
 		return action.ApplyAction()
 	}
