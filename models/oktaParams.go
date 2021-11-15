@@ -8,7 +8,8 @@ import (
 )
 
 const (
-	OktaParamsDefaultTemplateLocation    = "/data/templates/application/default.json"
+	OktaParamsDefaultTemplateLocation    = "/data/templates/applications/default.json"
+	OktaParamsDefaultTemplateName        = "default"
 	OktaParamsApplicationsStatusActive   = "ACTIVE"
 	OktaParamsApplicationsStatusInactive = "INACTIVE"
 )
@@ -34,9 +35,14 @@ func (toolParams *OktaToolParameters) LoadParameters(params []string) error {
 	switch toolParams.Action {
 	case ActionTypeOktaApplicationCreate:
 		toolParams.DataLocation = params[0]
-		toolParams.TemplateName = params[1]
 
 		length := len(params)
+		if length > 1 {
+			toolParams.TemplateName = params[1]
+		} else {
+			toolParams.TemplateName = OktaParamsDefaultTemplateName
+		}
+
 		if length > 2 {
 			toolParams.TemplateLocation = params[2]
 		} else {
@@ -51,7 +57,7 @@ func (toolParams *OktaToolParameters) LoadParameters(params []string) error {
 		}
 
 		if length > 3 {
-			toolParams.TemplateLocation = params[3]
+			toolParams.CertLocation = params[3]
 		}
 	case ActionTypeOktaApplicationList:
 		toolParams.DataLocation = params[0]

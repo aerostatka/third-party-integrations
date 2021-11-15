@@ -1,0 +1,123 @@
+{
+  "templates": {
+    "default": {
+      "name": "Default",
+      "app": {
+        "credentials": {
+          "userNameTemplate": {
+            "template": "${source.email}",
+            "type": "BUILT_IN"
+          }
+        },
+        "visibility": {
+          "autoSubmitToolbar": false,
+          "hide": {
+            "iOS": false,
+            "web": false
+          }
+        },
+        "features": [],
+        "label": "{{LABEL}}",
+        "settings": {
+          "signOn": {
+            "acsEndpoints": [],
+            "allowMultipleAcsEndpoints": false,
+            "assertionSigned": true,
+            "attributeStatements": [
+              {
+                "name": "Email",
+                "namespace": "urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified",
+                "type": "EXPRESSION",
+                "values": [
+                  "user.email"
+                ]
+              },
+              {
+                "name": "FirstName",
+                "namespace": "urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified",
+                "type": "EXPRESSION",
+                "values": [
+                  "user.firstName"
+                ]
+              },
+              {
+                "name": "LastName",
+                "namespace": "urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified",
+                "type": "EXPRESSION",
+                "values": [
+                  "user.lastName"
+                ]
+              },
+              {
+                "name": "Portals",
+                "namespace": "urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified",
+                "type": "EXPRESSION",
+                "values": [
+                  "appuser.portals"
+                ]
+              },
+              {
+                "name": "AdminAccessLevels",
+                "namespace": "urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified",
+                "type": "EXPRESSION",
+                "values": [
+                  "appuser.adminAccessLevels"
+                ]
+              },
+              {
+                "name": "CaremanagerAccessLevels",
+                "namespace": "urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified",
+                "type": "EXPRESSION",
+                "values": [
+                  "appuser.caremanagerAccessLevels"
+                ]
+              },
+              {
+                "name": "CareproviderAccessLevels",
+                "namespace": "urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified",
+                "type": "EXPRESSION",
+                "values": [
+                  "appuser.careproviderAccessLevels"
+                ]
+              },
+              {
+                "name": "CaregiverAccessLevels",
+                "namespace": "urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified",
+                "type": "EXPRESSION",
+                "values": [
+                  "appuser.caregiverAccessLevels"
+                ]
+              },
+              {
+                "name": "ClientAccessLevels",
+                "namespace": "urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified",
+                "type": "EXPRESSION",
+                "values": [
+                  "appuser.clientAccessLevels"
+                ]
+              }
+            ],
+            "audience": "{{URL}}module.php/saml/sp/metadata.php/crossportalokta",
+            "authnContextClassRef": "urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport",
+            "defaultRelayState": "",
+            "destination": "{{URL}}module.php/saml/sp/saml2-acs.php/crossportalokta",
+            "digestAlgorithm": "SHA256",
+            "honorForceAuthn": true,
+            "idpIssuer": "http://www.okta.com/${org.externalKey}",
+            "recipient": "{{URL}}module.php/saml/sp/saml2-acs.php/crossportalokta",
+            "requestCompressed": false,
+            "responseSigned": true,
+            "signatureAlgorithm": "RSA_SHA256",
+            "slo": {
+              "enabled": true,
+              "logoutUrl": "{{URL}}module.php/saml/sp/saml2-logout.php/crossportalokta"
+            },
+            "ssoAcsUrl": "{{URL}}module.php/saml/sp/saml2-acs.php/crossportalokta",
+            "subjectNameIdFormat": "urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified",
+            "subjectNameIdTemplate": "${user.userName}"
+          }
+        }
+      }
+    }
+  }
+}

@@ -2,9 +2,11 @@ package oktatool
 
 import (
 	"encoding/csv"
+	"encoding/json"
 	"errors"
 	"github.com/aerostatka/third-party-integrations/models"
 	"io"
+	"io/ioutil"
 	"os"
 	"path"
 )
@@ -29,10 +31,9 @@ const (
 
 type Storage interface {
 	GetAppsData(location string) ([]models.SimpleApp, error)
-	GetTemplate(location string, templateName string) error
+	GetTemplate(location string, templateName string) (*models.Template, error)
 	StoreApplicationData(location string, apps []models.SimpleApp) error
 }
-
 type LocalCsvFileStorage struct {
 }
 
@@ -94,10 +95,6 @@ func (storage *LocalCsvFileStorage) GetAppsData(location string) ([]models.Simpl
 	return apps, nil
 }
 
-func (storage *LocalCsvFileStorage) GetTemplate(location string, templateName string) error {
-	return nil
-}
-
 func (storage *LocalCsvFileStorage) StoreApplicationData(location string, apps []models.SimpleApp) error {
 	if len(apps) == 0 {
 		return nil
@@ -137,4 +134,32 @@ func (storage *LocalCsvFileStorage) StoreApplicationData(location string, apps [
 	writer.Flush()
 
 	return nil
+}
+
+func (storage *LocalCsvFileStorage) GetTemplate(location string, templateName string) (*models.Template, error) {
+	if !storage.validateTemplateFileLocation(location) {
+		return nil, errors.New("Extension is not supported")
+	}
+
+	jsonFile, err := os.Open(location)
+	if err != nil {
+		return nil, err
+	}
+
+	defer jsonFile.Close()
+
+	byteValue, _ := ioutil.ReadAll(jsonFile)
+
+	var templates models.Templates
+	err = json.Unmarshal(byteValue, &templates)
+	if err != nil {
+		return nil, err
+	}
+
+	template, ok := templates.Templates[templateName]
+	if !ok {
+		return nil, errors.New("Template is not found")
+	}
+
+	return &template, nil
 }

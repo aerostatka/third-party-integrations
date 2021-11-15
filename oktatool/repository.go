@@ -18,6 +18,7 @@ type Repository interface {
 	GetApplications(status string, hardLimit int) ([]models.SimpleApp, error)
 	ChangeApplicationStatus(app *models.SimpleApp, status string) error
 	DeleteApplication(app *models.SimpleApp) error
+	CreateApplication(app *models.SimpleApp, template *models.Template) error
 }
 
 type OktaRepository struct {
@@ -112,4 +113,8 @@ func (rep *OktaRepository) DeleteApplication(app *models.SimpleApp) error {
 	_, err := rep.client.Application.DeleteApplication(rep.context, app.Id)
 
 	return err
+}
+
+func (rep *OktaRepository) CreateApplication(app *models.SimpleApp, template *models.Template) error {
+	return nil
 }
