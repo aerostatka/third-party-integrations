@@ -45,7 +45,7 @@ func (action *ListAppAction) listApplications() ([]models.SimpleApp, error) {
 	action.logger.Info(fmt.Sprintf("%d applications were found", len(apps)))
 
 	action.logger.Info("Storing applications to a file")
-	err = action.storage.StoreApplicationData(action.parameters.DataLocation, apps)
+	err = action.storage.StoreApplicationsData(action.parameters.DataLocation, apps)
 
 	if err != nil {
 		return apps, err

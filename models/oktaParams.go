@@ -23,6 +23,7 @@ var (
 
 type OktaToolParameters struct {
 	Action           string
+	Name             string
 	DataLocation     string
 	TemplateLocation string
 	TemplateName     string
@@ -81,6 +82,9 @@ func (toolParams *OktaToolParameters) LoadParameters(params []string) error {
 
 			toolParams.Status = params[2]
 		}
+	case ActionTypeOktaApplicationGet:
+		toolParams.DataLocation = params[0]
+		toolParams.Name = params[1]
 	case ActionTypeOktaApplicationDisable,
 		ActionTypeOktaApplicationEnable,
 		ActionTypeOktaApplicationDelete:

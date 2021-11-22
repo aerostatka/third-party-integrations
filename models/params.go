@@ -11,6 +11,7 @@ const (
 
 const (
 	ActionTypeOktaApplicationList       string = "applicationList"
+	ActionTypeOktaApplicationGet        string = "applicationGet"
 	ActionTypeOktaApplicationCreate     string = "applicationCreate"
 	ActionTypeOktaApplicationDisable    string = "applicationDisable"
 	ActionTypeOktaApplicationEnable     string = "applicationEnable"
@@ -51,6 +52,7 @@ func (factoryParams *FactoryParams) hasValidToolType() bool {
 func (factoryParams *FactoryParams) hasValidActionType() bool {
 	availableOktaActions := map[string]bool{
 		ActionTypeOktaApplicationList:       true,
+		ActionTypeOktaApplicationGet:        true,
 		ActionTypeOktaApplicationCreate:     true,
 		ActionTypeOktaApplicationDisable:    true,
 		ActionTypeOktaApplicationEnable:     true,
@@ -79,7 +81,8 @@ func (factoryParams *FactoryParams) hasValidParamsNumber() bool {
 			ActionTypeOktaApplicationEnable,
 			ActionTypeOktaApplicationDelete:
 			return len(factoryParams.ActionParameters) == 1
-		case ActionTypeOktaApplicationUpdateCert:
+		case ActionTypeOktaApplicationGet,
+			ActionTypeOktaApplicationUpdateCert:
 			return len(factoryParams.ActionParameters) == 2
 		}
 	}

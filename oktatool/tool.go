@@ -57,6 +57,10 @@ func (tool *ConsoleTool) PerformAction() *models.ActionResult {
 		action := CreateListAppAction(tool.repository, tool.storage, tool.parameters, tool.logger)
 
 		return action.ApplyAction()
+	case models.ActionTypeOktaApplicationGet:
+		action := CreateGetAppAction(tool.repository, tool.storage, tool.parameters, tool.logger)
+
+		return action.ApplyAction()
 	case models.ActionTypeOktaApplicationCreate:
 		action := CreateCreateAppAction(tool.repository, tool.storage, tool.parameters, tool.logger)
 

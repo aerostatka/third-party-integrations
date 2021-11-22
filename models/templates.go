@@ -28,25 +28,25 @@ type OktaApplicationSettings struct {
 type OktaApplicationSettingsApp map[string]interface{}
 
 type OktaApplicationSettingsSignOn struct {
-	AllowMultipleAcsEndpoints bool                                      `json:"allowMultipleAcsEndpoints,omitempty"`
-	AcsEndpoints              []string                                  `json:"acsEndpoints,omitempty"`
-	AttributeStatements       []OktaApplicationSettingsSignOnAttributes `json:"attributeStatements,omitempty"`
-	Audience                  string                                    `json:"audience,omitempty"`
-	AuthnContextClassRef      string                                    `json:"authnContextClassRef,omitempty"`
-	DefaultRelayState         string                                    `json:"defaultRelayState,omitempty"`
-	Destination               string                                    `json:"destination,omitempty"`
-	DigestAlgorithm           string                                    `json:"digestAlgorithm,omitempty"`
-	HonorForceAuthn           bool                                      `json:"honorForceAuthn,omitempty"`
-	IdpIssuer                 string                                    `json:"idpIssuer,omitempty"`
-	Recipient                 string                                    `json:"recipient,omitempty"`
-	RequestCompressed         bool                                      `json:"requestCompressed,omitempty"`
-	ResponseSigned            bool                                      `json:"responseSigned,omitempty"`
-	SignatureAlgorithm        string                                    `json:"signatureAlgorithm,omitempty"`
-	SpCertificate             string                                    `json:"spCertificate,omitempty"`
-	Slo                       *OktaApplicationSettingsSignOnSlo         `json:"slo,omitempty"`
-	SsoAcsUrl                 string                                    `json:"ssoAcsUrl,omitempty"`
-	SubjectNameIdFormat       string                                    `json:"subjectNameIdFormat,omitempty"`
-	SubjectNameIdTemplate     string                                    `json:"subjectNameIdTemplate,omitempty"`
+	AllowMultipleAcsEndpoints bool                                        `json:"allowMultipleAcsEndpoints,omitempty"`
+	AcsEndpoints              []string                                    `json:"acsEndpoints,omitempty"`
+	AttributeStatements       []OktaApplicationSettingsSignOnAttributes   `json:"attributeStatements,omitempty"`
+	Audience                  string                                      `json:"audience,omitempty"`
+	AuthnContextClassRef      string                                      `json:"authnContextClassRef,omitempty"`
+	DefaultRelayState         string                                      `json:"defaultRelayState,omitempty"`
+	Destination               string                                      `json:"destination,omitempty"`
+	DigestAlgorithm           string                                      `json:"digestAlgorithm,omitempty"`
+	HonorForceAuthn           bool                                        `json:"honorForceAuthn,omitempty"`
+	IdpIssuer                 string                                      `json:"idpIssuer,omitempty"`
+	Recipient                 string                                      `json:"recipient,omitempty"`
+	RequestCompressed         bool                                        `json:"requestCompressed,omitempty"`
+	ResponseSigned            bool                                        `json:"responseSigned,omitempty"`
+	SignatureAlgorithm        string                                      `json:"signatureAlgorithm,omitempty"`
+	SpCertificate             *OktaApplicationSettingsSignOnSpCertificate `json:"spCertificate,omitempty"`
+	Slo                       *OktaApplicationSettingsSignOnSlo           `json:"slo,omitempty"`
+	SsoAcsUrl                 string                                      `json:"ssoAcsUrl,omitempty"`
+	SubjectNameIdFormat       string                                      `json:"subjectNameIdFormat,omitempty"`
+	SubjectNameIdTemplate     string                                      `json:"subjectNameIdTemplate,omitempty"`
 }
 
 type OktaApplicationSettingsSignOnAttributes struct {
@@ -61,6 +61,10 @@ type OktaApplicationSettingsSignOnSlo struct {
 	LogoutUrl string `json:"logoutUrl,omitempty"`
 }
 
-func (app *OktaApplication) IsApplicationInstance() bool {
+type OktaApplicationSettingsSignOnSpCertificate struct {
+	X5c []string `json:"x5c,omitempty"`
+}
+
+func (app OktaApplication) IsApplicationInstance() bool {
 	return true
 }

@@ -5,19 +5,21 @@ import (
 	"encoding/json"
 	"errors"
 	"github.com/aerostatka/third-party-integrations/models"
+	"github.com/okta/okta-sdk-golang/v2/okta"
 	"io"
+	"io/fs"
 	"io/ioutil"
 	"os"
 	"path"
 )
 
 var (
-	localCsvFileStorageSupportedExtensions = map[string]bool{
+	localFileStorageSupportedExtensions = map[string]bool{
 		".csv": true,
 		".CSV": true,
 	}
 
-	localCsvFileStorageSupportedTemplateExtensions = map[string]bool{
+	localFileStorageSupportedJsonExtensions = map[string]bool{
 		".json": true,
 		".JSON": true,
 		".txt":  true,
@@ -32,7 +34,8 @@ const (
 type Storage interface {
 	GetAppsData(location string) ([]models.SimpleApp, error)
 	GetTemplate(location string, templateName string) (*models.Template, error)
-	StoreApplicationData(location string, apps []models.SimpleApp) error
+	StoreApplicationsData(location string, apps []models.SimpleApp) error
+	StoreApplicationData(location string, app okta.App) error
 }
 type LocalCsvFileStorage struct {
 }
@@ -41,20 +44,20 @@ func CreateLocalCsvFileStorage() *LocalCsvFileStorage {
 	return &LocalCsvFileStorage{}
 }
 
-func (storage *LocalCsvFileStorage) validateApplicationFileLocation(location string) bool {
+func (storage *LocalCsvFileStorage) validateFileLocation(location string) bool {
 	ext := path.Ext(location)
-	return localCsvFileStorageSupportedExtensions[ext]
+	return localFileStorageSupportedExtensions[ext]
 }
 
-func (storage *LocalCsvFileStorage) validateTemplateFileLocation(location string) bool {
+func (storage *LocalCsvFileStorage) validateJsonFileLocation(location string) bool {
 	ext := path.Ext(location)
-	return localCsvFileStorageSupportedTemplateExtensions[ext]
+	return localFileStorageSupportedJsonExtensions[ext]
 }
 
 func (storage *LocalCsvFileStorage) GetAppsData(location string) ([]models.SimpleApp, error) {
 	var apps []models.SimpleApp
 
-	if !storage.validateApplicationFileLocation(location) {
+	if !storage.validateFileLocation(location) {
 		return apps, errors.New("Extension is not supported")
 	}
 
@@ -95,12 +98,12 @@ func (storage *LocalCsvFileStorage) GetAppsData(location string) ([]models.Simpl
 	return apps, nil
 }
 
-func (storage *LocalCsvFileStorage) StoreApplicationData(location string, apps []models.SimpleApp) error {
+func (storage *LocalCsvFileStorage) StoreApplicationsData(location string, apps []models.SimpleApp) error {
 	if len(apps) == 0 {
 		return nil
 	}
 
-	if !storage.validateApplicationFileLocation(location) {
+	if !storage.validateFileLocation(location) {
 		return errors.New("Extension is not supported")
 	}
 
@@ -136,8 +139,26 @@ func (storage *LocalCsvFileStorage) StoreApplicationData(location string, apps [
 	return nil
 }
 
+func (storage *LocalCsvFileStorage) StoreApplicationData(location string, app okta.App) error {
+	if !storage.validateJsonFileLocation(location) {
+		return errors.New("Extension is not supported")
+	}
+
+	jsonString, err := json.MarshalIndent(app, "", "\t")
+	if err != nil {
+		return err
+	}
+
+	err = ioutil.WriteFile(location, jsonString, fs.ModePerm)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (storage *LocalCsvFileStorage) GetTemplate(location string, templateName string) (*models.Template, error) {
-	if !storage.validateTemplateFileLocation(location) {
+	if !storage.validateJsonFileLocation(location) {
 		return nil, errors.New("Extension is not supported")
 	}
 

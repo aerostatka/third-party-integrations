@@ -15,6 +15,7 @@ const (
 )
 
 type Repository interface {
+	GetApplication(appId string) (okta.App, error)
 	GetApplications(status string, hardLimit int) ([]models.SimpleApp, error)
 	ChangeApplicationStatus(app *models.SimpleApp, status string) error
 	DeleteApplication(app *models.SimpleApp) error
@@ -31,6 +32,12 @@ func CreateOktaRepository(ctx context.Context, ct *okta.Client) *OktaRepository 
 		context: ctx,
 		client:  ct,
 	}
+}
+
+func (rep *OktaRepository) GetApplication(appId string) (okta.App, error) {
+	app, _, err := rep.client.Application.GetApplication(rep.context, appId, &models.OktaApplication{}, nil)
+
+	return app, err
 }
 
 func (rep *OktaRepository) GetApplications(status string, hardLimit int) ([]models.SimpleApp, error) {
